@@ -1,5 +1,5 @@
 # jspath-db
-A quick and dirty db-like object that uses [jspath]() for query dsm
+A quick and dirty db-like object that uses [jspath](https://www.npmjs.com/package/jspath) for query dsm
 
 Backing provided for file, memory and browser localStorage
 
