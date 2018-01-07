@@ -1,0 +1,29 @@
+{
+  "name": "jspath-db",
+  "version": "1.0.0",
+  "description": "A quick and dirty db-like object that uses jspath for query dsm",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/victor-stone/jspath-db.git"
+  },
+  "keywords": [
+    "database",
+    "jspath",
+    "javascript",
+    "query"
+  ],
+  "author": "Victor Stone",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/victor-stone/jspath-db/issues"
+  },
+  "homepage": "https://github.com/victor-stone/jspath-db#readme",
+  "dependencies": {
+    "jspath": "^0.4.0",
+    "moment": "^2.20.1"
+  }
+}
