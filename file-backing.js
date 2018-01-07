@@ -10,7 +10,7 @@ class FileDataBacking {
     return writeFileSync(this._pathToData, stringify(obj));
   }
   read() {
-    parse(readFileSync(this._pathToData));
+    return parse(readFileSync(this._pathToData));
   }
 }
 
