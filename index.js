@@ -1,6 +1,9 @@
 const path = require('jspath');
 const moment = require('moment');
 
+/**
+ * Light weight db-like object that encourages jspath query
+ */
 class Data {
 
   constructor(backing) {
@@ -117,7 +120,7 @@ class Data {
   /**
    * Add record(s) to a table
    * @param {string} table 
-   * @param {Array|{}} record 
+   * @param {Array|object} record 
    */
   add(table, record) {
     const { _table: t } = this;
@@ -132,8 +135,8 @@ class Data {
   /**
    * Update a record with replace (no merge)
    * @param {string} table 
-   * @param {{}} record 
-   * @param {()} filter - if null, the record is matched with 'id'
+   * @param {object} record 
+   * @param {Function} filter - if null, the record is matched with 'id'
    */
   replace(table, record, filter = null) {
     if (!filter) {
@@ -146,7 +149,7 @@ class Data {
   /**
    * Replace all the records in a table
    * @param {string} table 
-   * @param {[]} records 
+   * @param {array} records 
    */
   replaceAll(table, records) {
     const { _table: t } = this;
@@ -156,7 +159,7 @@ class Data {
   /**
    * @private
    * @param {string} q 
-   * @param {{}} d 
+   * @param {object} d 
    */
   _query(q, d = this._data) {
     try {
@@ -177,7 +180,7 @@ class Data {
   /**
    * @private
    * @param {string} table 
-   * @param {()} filter - remove every record that matches this filter
+   * @param {Function} filter - remove every record that matches this filter
    */
   _remove(table, filter) {
     const { _table: t } = this;
@@ -188,7 +191,7 @@ class Data {
    * Omnibus internal to read/replace data in a table
    * @private
    * @param {string} table 
-   * @param {{}} data 
+   * @param {object} data 
    */
   _table(table, data = null) {
     const { _data: d } = this;
@@ -203,7 +206,7 @@ class Data {
   /**
    * Flush memory to backing
    * @private
-   * @param {{}} d 
+   * @param {object} d 
    */
   _write(d = this._data) {
     if (!this._writeSuspended) {
