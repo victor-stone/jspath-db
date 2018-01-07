@@ -21,18 +21,6 @@ class Data {
   }
 
   /**
-   * Flush log (regular and errors)
-   */
-  cleanLogs() {
-    this._writeSuspended = true;
-    this.replaceAll('_internal', []);
-    this.replace('system', [], ({ id }) => id !== 1);
-    this.log('cleaned logs');
-    this._writeSuspended = false;
-    this._write();
-  }
-
-  /**
    * Store an error report in the 'error' table
    * 
    * @param {any} error 
