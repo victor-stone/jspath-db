@@ -52,8 +52,8 @@ fileDB.replace( 'books', record, ({name}) => name === record.name );
     }
   ]
 }
-
-*/````
+*/
+````
 
 # Example (in memory)
 
@@ -94,4 +94,5 @@ memDB.query( 'people', ageQuery ).forEach( obj => console.log(obj) );
 Object {name: "judy", age: 75, city: "Valencia"}
 Object {name: "sally", age: 53, city: "Seattle"}
 Object {name: "bob", age: 39, city: "Perth"}
-*/````
+*/
+````
