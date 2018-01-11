@@ -1,6 +1,6 @@
 {
   "name": "jspath-db",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A quick and dirty db-like object that uses jspath for query dsm",
   "main": "index.js",
   "scripts": {

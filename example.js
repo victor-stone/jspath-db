@@ -1,8 +1,8 @@
-const Database = require('./index');
+const Database = require('./index')
 
-const MemoryBacking = require('./memory-backing');
-const FileBacking = require('./file-backing');
-const { join } = require('path');
+const MemoryBacking = require('./memory-backing')
+const FileBacking = require('./file-backing')
+const { join } = require('path')
 
 const MyData = {
 
@@ -34,28 +34,32 @@ const MyData = {
       author: 'Shane Bayne'
     }
   ]
-};
+}
 
-const memDB = new Database( new MemoryBacking() );
+const memDB = new Database(new MemoryBacking())
 
-memDB.add( 'people', MyData.people );
-memDB.add( 'people', { name: 'bob', age: 39, city: 'Perth' } );
+memDB.add('people', MyData.people)
+memDB.add('people', { name: 'bob', age: 39, city: 'Perth' })
 
-const ageQuery = '.{.age > 38}';
+const ageQuery = '.{.age > 38}'
 
-memDB.query( 'people', ageQuery ).forEach( obj => console.log(obj) );
+memDB.query('people', ageQuery).forEach(obj => console.log(obj))
 
-const PathToFile = join( __dirname, './books.json' );
+const nameQuery = '.{.name ==="sally"}'
 
-const fileDB = new Database( new FileBacking( PathToFile ) );
+console.log('Name query: ', memDB.queryOne('people', nameQuery))
 
-fileDB.add( 'books', MyData.books );
+const PathToFile = join(__dirname, './books.json')
 
-const record = { name: 'My Hot Tub', author: 'Shane Bayne with Kurt Burt' };
+const fileDB = new Database(new FileBacking(PathToFile))
 
-fileDB.replace( 'books', record, ({name}) => name === record.name );
+fileDB.add('books', MyData.books)
 
-/* Result on disk: 
+const record = { name: 'My Hot Tub', author: 'Shane Bayne with Kurt Burt' }
+
+fileDB.replace('books', record, ({name}) => name === record.name)
+
+/* Result on disk:
 
 {
   "log": [
