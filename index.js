@@ -39,6 +39,9 @@ class Data {
    * @param {string} q
    */
   query (table, q) {
+    if (table[0] !== '"') {
+      table = `"${table}"`
+    }
     return this._query(`.${table}${q}`)
   }
 
@@ -145,7 +148,7 @@ class Data {
 
   /**
    * Number of table objects in the database
-   * @param {string} table 
+   * @param {string} table
    */
   numRows (table) {
     return this._data[table].length
