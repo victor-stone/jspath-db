@@ -24,11 +24,9 @@ class Data {
    * @param {string} table
    */
   nextId (table) {
-    let id = this.queryItem(table, '.id', this._dec) || 0
-    if (isNaN(id)) {
-      id = 0
-    }
-    return id + 1
+    const ids = this.query(table, '.id').sort((a, b) => b - a)
+    const id = ids.length && !isNaN(ids[0]) ? ids[0] + 1 : 1
+    return id
   }
 
   /**
@@ -211,14 +209,6 @@ class Data {
    */
   _read () {
     return this._backing.read()
-  }
-
-  _dec (s) {
-    return s.sort((a, b) => a > b ? -1 : 1)
-  }
-
-  _inc (s) {
-    return s.sort((a, b) => a > b ? 1 : -1)
   }
 
   _logError (e) {
