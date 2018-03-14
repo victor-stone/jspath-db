@@ -115,6 +115,24 @@ class Data {
   }
 
   /**
+   * Remove records that match a filter. The filter can be either a function that names a record as it's parameter and returns a boolean where true := remove this record, false := retain this record or filter is a query string that matches records to be removed (i.e. any record that matches that query will be removed)
+   * @param {string} table 
+   * @param {Function | string} filter remove the records that match this filter (either function or query)
+   */
+  remove (table, filter) {
+    const { _table: t } = this
+    let records = null
+    if (typeof filter === 'function') {
+      records = t(table).filter(q => !filter(q))
+    } else {
+      const hashes = this.query(table, filter).map(r => JSON.stringify(r)).sort()
+      hashes.length && (records = t(table).filter(r => !hashes.includes(JSON.stringify(r))))
+    }
+    records && this.replaceAll(table, records)
+  }
+
+  
+  /**
    * Replace all the records in a table
    * @param {string} table
    * @param {array} records
@@ -171,9 +189,8 @@ class Data {
    * @param {string} table
    * @param {Function} filter - remove every record that matches this filter
    */
-  _remove (table, filter) {
-    const { _table: t } = this
-    this.replaceAll(table, t(table).filter(q => !filter(q)))
+  _remove (table,filter) {
+    return this.remove(table,filter)
   }
 
   /**
