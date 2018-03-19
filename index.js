@@ -36,7 +36,7 @@ class Data {
    * @param {string} table
    * @param {string} q
    */
-  query (table, q) {
+  query (table, q = '.') {
     if (table[0] !== '"') {
       table = `"${table}"`
     }
@@ -116,7 +116,7 @@ class Data {
 
   /**
    * Remove records that match a filter. The filter can be either a function that names a record as it's parameter and returns a boolean where true := remove this record, false := retain this record or filter is a query string that matches records to be removed (i.e. any record that matches that query will be removed)
-   * @param {string} table 
+   * @param {string} table
    * @param {Function | string} filter remove the records that match this filter (either function or query)
    */
   remove (table, filter) {
@@ -189,8 +189,8 @@ class Data {
    * @param {string} table
    * @param {Function} filter - remove every record that matches this filter
    */
-  _remove (table,filter) {
-    return this.remove(table,filter)
+  _remove (table, filter) {
+    return this.remove(table, filter)
   }
 
   /**
