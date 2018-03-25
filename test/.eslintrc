@@ -1,0 +1,9 @@
+{
+  "extends": "standard",
+  "rules": {
+    "padded-blocks": 0
+  },
+  "env": {
+    "mocha": true
+  }
+}

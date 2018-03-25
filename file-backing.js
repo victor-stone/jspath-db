@@ -1,17 +1,22 @@
-const { readFileSync, writeFileSync } = require('fs');
+const { readFileSync, writeFileSync } = require('fs')
+const Bakcing = require('./backing')
+const { stringify, parse } = JSON
 
-const { stringify, parse } = JSON;
+class FileDataBacking extends Bakcing {
 
-class FileDataBacking {
-  constructor(pathToData) {
-    this._pathToData = pathToData;
+  constructor (pathToData) {
+    super(...arguments)
+    this._pathToData = pathToData
   }
-  write(obj) {
-    return writeFileSync(this._pathToData, stringify(obj));
+
+  write (obj) {
+    return writeFileSync(this._pathToData, stringify(obj))
   }
-  read() {
-    return parse(readFileSync(this._pathToData));
+
+  read () {
+    return parse(readFileSync(this._pathToData))
   }
+
 }
 
-module.exports = FileDataBacking;
+module.exports = FileDataBacking

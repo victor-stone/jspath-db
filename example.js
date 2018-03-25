@@ -1,5 +1,6 @@
-const Database = require('./index')
+const Database = require('.')
 const FileBacking = require('./file-backing')
+const MemoryBacking = require('./memory-backing')
 const { join } = require('path')
 
 const PathToFile = join(__dirname, './books.json')

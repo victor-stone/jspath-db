@@ -1,21 +1,31 @@
 const path = require('jspath')
 const moment = require('moment')
+const Backing = require('./backing')
 
+const checkTable = (table,method) => { if (typeof table !== 'string') { throw new ReferenceError('Table name must be a string in ' + method) } }
 /**
  * Light weight db-like object that encourages jspath query
  */
-class Data {
+class JSPathDataBase {
 
   constructor (backing) {
+    if (!(backing instanceof Backing)) {
+      throw new ReferenceError('JSPathDatabase requires object that extends Backing')
+    }
     this._backing = backing
     this._table = this._table.bind(this)
     this._writeSuspended = false
-    try {
-      this._data = this._read() || {}
-    } catch (e) {
-      this._data || (this._data = {})
-      this._logError(e)
-    }
+    this._fetch()
+    this._lastError = null
+    this._noCache = false
+  }
+
+  /**
+   * Setting this to 'true' tells the database to read the backing (e.g. file) on every query. This is 
+   * needed when multiple processes are writing/reading from the same backing
+   */
+  set noCache (value) {
+    this._noCache = value
   }
 
   /**
@@ -24,8 +34,9 @@ class Data {
    * @param {string} table
    */
   nextId (table) {
+    checkTable(table, 'nextId')
     const ids = this.query(table, '.id').sort((a, b) => b - a)
-    const id = ids.length && !isNaN(ids[0]) ? ids[0] + 1 : 1
+    const id = ids && ids.length && !isNaN(ids[0]) ? ids[0] + 1 : 1
     return id
   }
 
@@ -37,6 +48,7 @@ class Data {
    * @param {string} q
    */
   query (table, q = '.') {
+    checkTable(table, 'query')
     if (table[0] !== '"') {
       table = `"${table}"`
     }
@@ -91,6 +103,8 @@ class Data {
    * @param {Array|object} record
    */
   add (table, record) {
+    checkTable(table, 'add')
+    if (record === void 0) { throw new ReferenceError('expected record parameter in "add" ') }
     const { _table: t } = this
     if (Array.isArray(record)) {
       this.replaceAll(table, [...t(table), ...record])
@@ -107,8 +121,14 @@ class Data {
    * @param {Function} filter - if null, the record is matched with 'id'
    */
   replace (table, record, filter = null) {
+    checkTable(table, 'replace')
+    if (!record) { throw new ReferenceError('Missing "record" parameter to replace') }
     if (!filter) {
-      filter = r => r.id === record.id
+      if (record.id) {
+        filter = r => r.id === record.id
+      } else {
+        throw new ReferenceError('To replace a record it must either have an .id field or you must supply a filter query or filter function')
+      }
     }
     this._remove(table, filter)
     this.add(table, record)
@@ -120,6 +140,7 @@ class Data {
    * @param {Function | string} filter remove the records that match this filter (either function or query)
    */
   remove (table, filter) {
+    checkTable(table, 'remove')
     const { _table: t } = this
     let records = null
     if (typeof filter === 'function') {
@@ -131,13 +152,13 @@ class Data {
     records && this.replaceAll(table, records)
   }
 
-  
   /**
    * Replace all the records in a table
    * @param {string} table
    * @param {array} records
    */
   replaceAll (table, records) {
+    checkTable(table, 'replaceAll')
     const { _table: t } = this
     t(table, records)
   }
@@ -167,19 +188,29 @@ class Data {
    * @param {string} table
    */
   numRows (table) {
-    return this._data[table].length
+    checkTable(table, 'numRows')
+    return this.data[table].length
   }
-  
+
+  /**
+   * @returns {Error} object if the last query caused an exception, otherwise null
+   */
+  get lastError () {
+    return this._lastError
+  }
+
   /**
    * @private
    * @param {string} q
    * @param {object} d
    */
-  _query (q, d = this._data) {
+  _query (q, d = this.data) {
     try {
+      this._lastError = null
       return path(q, d)
     } catch (e) {
       this._logError(e)
+      this._lastError = e
       return []
     }
   }
@@ -200,7 +231,7 @@ class Data {
    * @param {object} data
    */
   _table (table, data = null) {
-    const { _data: d } = this
+    const { data: d } = this
     !d[table] && (d[table] = [])
     if (data) {
       d[table] = data
@@ -214,7 +245,7 @@ class Data {
    * @private
    * @param {object} d
    */
-  _write (d = this._data) {
+  _write (d = this.data) {
     if (!this._writeSuspended) {
       this._backing.write(d)
     }
@@ -228,13 +259,29 @@ class Data {
     return this._backing.read()
   }
 
+  _fetch () {
+    try {
+      this._data = this._read() || {}
+    } catch (e) {
+      this._data || (this._data = {})
+      this._logError(e)
+    }    
+  }
+
   _logError (e) {
     const _e = {
       message: e.message,
       date: moment().utc().format()
     }
-    this.add('_internal', _e)  
+    this.add('_internal', _e)
+  }
+
+  get data () {
+    if (this._noCache) {
+      this._fetch()
+    }
+    return this._data
   }
 }
 
-module.exports = Data
+module.exports = JSPathDataBase
