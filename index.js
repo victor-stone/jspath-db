@@ -264,7 +264,10 @@ class JSPathDataBase {
       this._data = this._read() || {}
     } catch (e) {
       this._data || (this._data = {})
+      const oldCacheFlag = this._noCache
+      this._noCache = false
       this._logError(e)
+      this._noCache = oldCacheFlag
     }    
   }
 
