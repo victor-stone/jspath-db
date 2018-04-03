@@ -73,7 +73,7 @@ class JSPathDataBase {
    * @param {string} q jspath query
    * @param {Function} cb perform any massaging on the results before returning
    */
-  queryItem (table, q, cb) {
+  queryItem (table, q = '.', cb) {
     return this.query(table, q + '[0]')
   }
 
