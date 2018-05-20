@@ -112,6 +112,7 @@ class JSPathDataBase {
       t(table).push(record)
       this._write(this._data)
     }
+    return record
   }
 
   /**
@@ -131,7 +132,7 @@ class JSPathDataBase {
       }
     }
     this._remove(table, filter)
-    this.add(table, record)
+    return this.add(table, record)
   }
 
   /**
@@ -149,7 +150,7 @@ class JSPathDataBase {
       const hashes = this.query(table, filter).map(r => JSON.stringify(r)).sort()
       hashes.length && (records = t(table).filter(r => !hashes.includes(JSON.stringify(r))))
     }
-    records && this.replaceAll(table, records)
+    return records ? this.replaceAll(table, records) : t(table)
   }
 
   /**
@@ -160,7 +161,7 @@ class JSPathDataBase {
   replaceAll (table, records) {
     checkTable(table, 'replaceAll')
     const { _table: t } = this
-    t(table, records)
+    return t(table, records)
   }
 
   /**
